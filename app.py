@@ -300,5 +300,4 @@ def main():
     orgdb()
 
 if __name__ == "__main__":
-    # scrape_webpage_content("https://evadb.readthedocs.io/en/stable/source/overview/getting-started.html")
     main()
