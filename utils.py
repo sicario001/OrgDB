@@ -1,7 +1,12 @@
 import os
+import re
 import sys
 from tqdm import tqdm
 from functools import wraps
+import requests
+from bs4 import BeautifulSoup
+
+TMP_PATH = "tmp"
 
 class SuppressOutput:
     def __enter__(self):
@@ -50,3 +55,23 @@ def loading_indicator(start_message="Loading...", end_message = "Loading Complet
             return result
         return wrapper
     return decorator
+
+def is_valid_url(url: str):
+    response = requests.get(url)
+    return response.status_code == 200
+
+def scrape_webpage_content(url: str):
+    response = requests.get(url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        page_content = soup.get_text()
+        paragraphs = page_content.split('\n\n')
+        
+        non_empty_paragraphs  = []
+        for paragraph in paragraphs:
+            if paragraph != "":
+                non_empty_paragraphs.append(re.sub(r'[\'";]', '', paragraph))
+
+        return non_empty_paragraphs
+    else:
+        return None
