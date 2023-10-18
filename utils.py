@@ -70,7 +70,7 @@ def scrape_webpage_content(url: str):
         
         non_empty_paragraphs  = []
         for paragraph in paragraphs:
-            if paragraph != "":
+            if len(paragraph) > 5:
                 non_empty_paragraphs.append(re.sub(r'[\'";]', '', paragraph))
 
         return non_empty_paragraphs

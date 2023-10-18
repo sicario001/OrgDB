@@ -108,7 +108,7 @@ class OrgDB:
 
         non_empty_paragraphs  = []
         for paragraph in paragraphs:
-            if paragraph != "":
+            if len(paragraph) > 5:
                 non_empty_paragraphs.append(re.sub(r'[\'";]', '', paragraph))
 
         for i, paragraph in enumerate(non_empty_paragraphs):
