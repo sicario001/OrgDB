@@ -1,8 +1,14 @@
 # OrgDB
+## Running
+1. `pip install -r requirements.txt`
+2. `python app.py` 
+
 ## Introduction
 OrgDB is a tool that is closely inspired from Gerev and developed using EvaDB. OrgDB allows users to load their documents and supports user queries by generating relevant answers within the context of the loaded documents. In the following sections, I will describe the key features of OrgDB, some important implementation details, few use cases of OrgDB and finally the future directions.
 
 ## Features
+![fig1](resources/1.png)
+![fig6](resources/6.png)
 1. Supports loading of documents of the following types: pdf, txt, web pages
 2. Allows users to display loaded documents along with the timestamp when they are loaded.
 3. Allows users to search documents using some query string. Display the most relevant results from the documents along with the sources and also generates a consolidated response for the user.
@@ -30,9 +36,12 @@ When a new query arrives, we first check the semantic similarity of the query wi
 
 ## Use Cases
 1. Loading and querying documents
+![fig3](resources/3.png)
+![fig4](resources/4.png)
 
 2. Query caching
 How does OrgDB cache queries, How does OrgDB query caching work (semantically similar)
+![fig5](resources/5.png)
 
 ## Future Directions
 1. Improving the performance of txt and web page queries.
