@@ -7,7 +7,7 @@
 OrgDB is a tool that is closely inspired from Gerev and developed using EvaDB. OrgDB allows users to load their documents and supports user queries by generating relevant answers within the context of the loaded documents. In the following sections, I will describe the key features of OrgDB, some important implementation details, few use cases of OrgDB and finally the future directions.
 
 ## Features
-![fig1](resources/1.png)
+![fig2](resources/2.png)
 ![fig6](resources/6.png)
 1. Supports loading of documents of the following types: pdf, txt, web pages
 2. Allows users to display loaded documents along with the timestamp when they are loaded.
