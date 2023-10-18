@@ -6,6 +6,17 @@ from functools import wraps
 import requests
 from bs4 import BeautifulSoup
 
+RESET = "\033[0m"
+
+BLINK = "\033[5m"
+
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+BLUE = "\033[94m"
+MAGENTA = "\033[95m"
+CYAN = "\033[96m"
+
 TMP_PATH = "tmp"
 
 class SuppressOutput:
@@ -43,21 +54,11 @@ class SuppressOutput:
         sys.stdout = self.original_stdout
         sys.stderr = self.original_stderr
 
-def loading_indicator(start_message="Loading...", end_message = "Loading Complete"):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            print(start_message)
-            with tqdm(total=1, desc="Progress", ncols=100) as pbar:
-                result = func(*args, **kwargs)
-                pbar.update(1)
-            print(end_message)
-            return result
-        return wrapper
-    return decorator
-
 def is_valid_url(url: str):
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except Exception:
+        return False
     return response.status_code == 200
 
 def scrape_webpage_content(url: str):

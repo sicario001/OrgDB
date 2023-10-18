@@ -1,8 +1,9 @@
 import shutil
+import time
 from typing import Any
 import evadb
 import warnings
-from utils import SuppressOutput, is_valid_url, loading_indicator, scrape_webpage_content
+from utils import BLINK, CYAN, GREEN, RED, RESET, YELLOW, SuppressOutput, is_valid_url, scrape_webpage_content
 import pandas as pd
 import os
 import re
@@ -10,24 +11,27 @@ from gpt4all import GPT4All
 import getch
 
 class OrgDB:
-    @loading_indicator(start_message="Initializing OrgDB...", end_message="Initialization complete")
     def __init__(self):
+        print(GREEN + BLINK + "⏳ Initializing OrgDB..." + RESET)
+        with SuppressOutput():
+                self.llm = GPT4All("ggml-model-gpt4all-falcon-q4_0.bin")
+
         self.cleanup()
 
-        with SuppressOutput():
-            self.llm = GPT4All("ggml-model-gpt4all-falcon-q4_0.bin")
-
         pd.set_option('display.max_colwidth', None)
-        self.cursor = evadb.connect().cursor()
         warnings.filterwarnings("ignore")
+        self.cursor = evadb.connect().cursor()
 
         self.pdfs_loaded = False
         self.mydocs_loaded = False
         self.last_action = None
+        self.separator = CYAN + "="*150 + RESET
+        self.star_separator = YELLOW + "*"*150 + RESET
 
-        self.separator = "="*150
-        self.star_separator = "*"*150
         self.setup()
+
+        print(GREEN + "Initialization complete" + RESET)
+        time.sleep(1)
 
     def cleanup(self):
         if os.path.exists("evadb_data"):
@@ -138,10 +142,10 @@ class OrgDB:
         print("Here are the top matches from your documents")
         for dist, _, name, page, paragraph, data in results:
             print(self.separator)
-            print("Document name:",name)
+            print(GREEN + "Document name:",name + RESET)
             print("Page no.:",page)
             print("Paragraph no.:",paragraph)
-            print("Data:",data)
+            print(YELLOW + "Data:",data + RESET)
 
     def get_combined_results(self, result_pdf, result_txt, top_k = 5, top_k_context = 10):
         results = []
@@ -199,7 +203,7 @@ class OrgDB:
         print(self.separator)
         response_str = self.check_cached(query_str)
         if response_str == "":
-            print("Generating response ...")
+            print(GREEN + BLINK + "⏳ Generating response ..." + RESET)
 
             llm_query = f"""If the context is not relevant, please answer the question by using your own knowledge about the topic.\n                
                 {context}\n
@@ -207,7 +211,7 @@ class OrgDB:
             """
             response_str = re.sub(r'[\'";]', '', str(self.llm.generate(llm_query)))
         else:
-            print("Using cached response")
+            print(GREEN + "Using cached response" + RESET)
 
         self.cache_query(query_str, response_str)
 
@@ -252,27 +256,27 @@ class OrgDB:
         else:
             os.system('clear')
         print(self.star_separator)
-        print("Welcome to OrgDB")
+        print(GREEN + "Welcome to OrgDB" + RESET)
         print(self.star_separator)
-        print("1. Enter 1 to load a document")
-        print("2. Enter 2 to display loaded documents")
-        print("3. Enter 3 to search documents")
-        print("4. Enter 4 to exit")
+        print(f"1. {RED}Enter {GREEN}{1}{RESET}{RED} to load a document{RESET}")
+        print(f"2. {RED}Enter {GREEN}{2}{RESET}{RED} to display loaded documents{RESET}")
+        print(f"3. {RED}Enter {GREEN}{3}{RESET}{RED} to search documents{RESET}")
+        print(f"4. {RED}Enter {GREEN}{4}{RESET}{RED} to exit{RESET}")
 
     def __call__(self):
         while (True):
             self.prompt_message()
-            mode = input("> ")
+            mode = input(f"🪄 {GREEN}>{RESET} ")
             if (mode == "1"):
                 path = input("Enter the path of the document (pdf/txt/url): ")
                 if self.check_doc_loaded(path):
                     print("Document already loaded!")
                 elif self.load_document(path):
-                    print(f"Loaded document {path}")
+                    print(GREEN + f"Loaded document {path}" + RESET)
                     self.last_action = "load"
                     self.reset_cached_queries()
                 elif self.load_webpage(url=path):
-                    print(f"Loaded webpage {path}")
+                    print(GREEN + f"Loaded webpage {path}" + RESET)
                     self.last_action = "load"
                     self.reset_cached_queries()
                 else:
@@ -289,7 +293,7 @@ class OrgDB:
             else:
                 print("Invalid choice!")
             
-            print("Press Enter to continue...")
+            print("Press " + GREEN + "Enter" + RESET + " to continue...")
             while True:
                 char = getch.getch()
                 if char == '\n':
